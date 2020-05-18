@@ -51,7 +51,11 @@ try {
   createFile('user.crt', process.env.USER_CRT)
   createFile('user.key', process.env.USER_KEY)
 
-  if (exec(`sudo openvpn --config ${finalPath} --daemon`).code !== 0) {
+  if (
+    exec(
+      `sudo openvpn --config ${finalPath} --ca ca.crt --key user.key --cert user.crt --daemon`,
+    ).code !== 0
+  ) {
     core.setFailed(`Can't setup config ${finalPath}`)
     process.exit(1)
   }
