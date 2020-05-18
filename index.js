@@ -53,7 +53,7 @@ try {
 
   if (
     exec(
-      `sudo openvpn --config ${finalPath} --ca ca.crt --key user.key --cert user.crt --daemon`,
+      `sudo openvpn --config ${finalPath} --ca ca.crt --key user.key --cert user.crt`,
     ).code !== 0
   ) {
     core.setFailed(`Can't setup config ${finalPath}`)
