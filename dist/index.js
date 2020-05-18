@@ -59,6 +59,19 @@ const ping = __webpack_require__(544)
 // GITHUB
 const core = __webpack_require__(470)
 
+async function startOvpn(finalPath) {
+  const {stdout, stderr} = await exec(
+    `sudo openvpn --config ${finalPath} --ca ca.crt --key user.key --cert user.crt --daemon`,
+  )
+
+  if (stderr) {
+    core.setFailed(`Can't setup config ${finalPath}
+      error: ${stderr}`)
+    process.exit(1)
+  }
+  console.log(`Log - ${stdout}`)
+}
+
 try {
   // Get input defined in action metadata file
   const pingURL = core.getInput('PING_URL')
@@ -106,12 +119,15 @@ try {
   createFile('user.crt', process.env.USER_CRT)
   createFile('user.key', process.env.USER_KEY)
 
+  startOvpn(finalPath)
+
   if (
     exec(
-      `sudo openvpn --config ${finalPath} --ca ca.crt --key user.key --cert user.crt`,
+      `sudo openvpn --config ${finalPath} --ca ca.crt --key user.key --cert user.crt --daemon`,
     ).code !== 0
   ) {
-    core.setFailed(`Can't setup config ${finalPath}`)
+    core.setFailed(`Can't setup config ${finalPath}
+      error: ${stderr}`)
     process.exit(1)
   }
 
