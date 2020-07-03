@@ -2,6 +2,7 @@ const path = require('path');
 const exec = require('shelljs.exec');
 const {spawn} = require('child_process');
 const ping = require('ping');
+const fs = require('fs');
 // GITHUB
 const core = require('@actions/core');
 
@@ -42,6 +43,8 @@ try {
 
   const finalPath = path.resolve(process.cwd(), fileOVPN);
 
+  console.log(finalPath);
+
   const createFile = (filename, data) => {
     if (exec('echo ' + data + ' |base64 -d >> ' + filename).code !== 0) {
       core.setFailed(`Can't create file ${filename}`);
@@ -64,6 +67,13 @@ try {
   createFile('ca.crt', process.env.CA_CRT);
   createFile('user.crt', process.env.USER_CRT);
   createFile('user.key', process.env.USER_KEY);
+
+  fs.readFile('ca.crt', 'utf8', function(err, data) {
+    if (err) {
+      return console.log(err);
+    }
+    console.log(data);
+  });
 
   // startOvpn(finalPath);
 
